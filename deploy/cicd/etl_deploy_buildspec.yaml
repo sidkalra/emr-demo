@@ -3,7 +3,6 @@ version: 0.2
 phases:
   install:
     commands:
-      - apt-get install jq
       - pip install -r etl/deploy/requirements.txt --upgrade
 
   pre_build:
@@ -11,7 +10,6 @@ phases:
       - npm -v
       - python --version
       - aws sts get-caller-identity
-      - jq --version
 
   build:
     commands:

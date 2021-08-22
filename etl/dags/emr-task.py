@@ -19,7 +19,110 @@ DEFAULT_ARGS = {
     'email_on_retry': True
 }
 
-SPARK_STEPS = [{
-    'Name': 'EMR Test',
-    'ActionOnFailure': 'CONTINUE',
-}]
+SPARK_STEPS = [
+    {
+        'Name': 'EMR Test',
+        'ActionOnFailure': 'CONTINUE',
+        'HadoopJarStep': {
+            'Jar': 'command-runner.jar',
+            'Args': [
+                'spark-submit',
+                '--deploy-mode',
+                'cluster',
+                '--master',
+                'yarn',
+                '--conf',
+                'spark.yarn.submit.waitAppCompletion=true',
+                '--py-files',
+                's3://emr-test-bucket/script/emrpkg-0.0.1-py3.9.egg',
+                's3://emr-test-bucket/script/__main__.py'
+            ],
+        },
+    }
+]
+
+JOB_FLOW_OVERRIDES = {
+    'Name': 'demo-cluster-airflow',
+    'ReleaseLabel': 'emr-5.33.0',
+    'LogUri': 's3n://emr-test-logs',
+    'Instances': {
+        'InstanceFleets': [
+            {
+                'Name': 'MASTER',
+                'InstanceFleetType': 'MASTER',
+                'TargetSpotCapacity': 1,
+                'InstanceTypeConfigs': [
+                    {
+                        'InstanceType': 'm1.medium'
+                    }
+                ]
+            },
+            {
+                'Name': 'CORE',
+                'InstanceFleetType': 'CORE',
+                'TargetSpotCapacity': 2,
+                'InstanceTypeConfigs': [
+                    {
+                        'InstanceType': 'm1.medium'
+                    }
+                ]
+            }
+
+        ],
+        'KeepJobFlowAliveWhenNoSteps': False,
+        'TerminationProtected': False,
+        'Ec2KeyName': 'personal-sid'
+    },
+    'BootStrapActions': [],
+    'Configurations': [
+        {
+            'Classification': 'spark-hive-site',
+            'Properties': {
+                'hive.metastore.client.factory.class': 'com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory'
+            }
+        }
+    ],
+    'VisibleToAllUsers': True,
+    'JobFlowRole': 'EMR_EC2_DefaultRole',
+    'ServiceRole': 'EMR_DefaultRole',
+    'EbsRootVolumeSize': 32,
+    'StepConcurrencyLevel': 1,
+    'SecurityConfiguration': 'emr-test-sec-config'
+}
+
+with DAG(
+    dag_id=DAG_ID,
+    description='Amazon EMR Test',
+    default_args=DEFAULT_ARGS,
+    dagrun_timeout=timedelta(hours=2),
+    start_date=days_ago(0),
+    schedule_interval='@once',
+    tags=['emr']
+) as dag:
+    cluster_creator = EmrCreateJobFlowOperator(
+        task_id='create_job_flow',
+        job_flow_overrides=JOB_FLOW_OVERRIDES
+    )
+
+    step_adder = EmrAddStepsOperator(
+        task_id='add_steps',
+        job_flow_id="{{ task_instance.xcom_pull(task_ids='create_job_flow', key='return_value') }}",
+        aws_conn_id='aws_default',
+        steps=SPARK_STEPS,
+    )
+
+    step_checker = EmrStepSensor(
+        task_id='watch_step',
+        job_flow_id="{{ task_instance.xcom_pull(task_ids='create_job_flow', key='return_value') }}",
+        step_id="{{ task_instance.xcom_pull(task_ids='add_steps', key='return_value')[0] }}",
+        aws_conn_id='aws_default',
+    )
+
+    cluster_remover = EmrTerminateJobFlowOperator(
+        task_id='remove_cluster',
+        job_flow_id="{{ task_instance.xcom_pull(task_ids='create_job_flow', key='return_value') }}",
+        aws_conn_id='aws_default',
+    )
+
+    cluster_creator >> step_adder >> step_checker >> cluster_remover
+
