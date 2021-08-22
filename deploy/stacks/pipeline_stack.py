@@ -168,11 +168,13 @@ class PipelineStack(cdk.Stack):
                 self._generate_codebuild_python_action(
                     action_name="PauseDAGs",
                     python_path="deploy",
-                    commands=["python deploy/cicd/pause_dags.py"]
+                    python_dependencies='dynaconf',
+                    commands=["python deploy/cicd/pause_dags.py"],
+                    run_order=1
                 ),
                 self._generate_codebuild_action(
                     action_name="CdkDeploy",
-                    buildspec_filename='deploye/cicd/cdk_deploy_bulidspec.yaml',
+                    buildspec_filename='deploy/cicd/cdk_deploy_buildspec.yaml',
                     env_vars_str={
                         'STACK_NAMES': 'sid-emr-test-cfn'
                     },
@@ -185,7 +187,7 @@ class PipelineStack(cdk.Stack):
                 ),
                 self._generate_codebuild_python_action(
                     action_name="UnpauseDAGs",
-                    python_path='',
+                    python_path='deploy',
                     commands=['python deploy/cicd/unpase_dags.py'],
                     run_order=4
                 )
