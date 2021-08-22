@@ -1,0 +1,20 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - npm install -g aws-cdk
+      - npm install -g cdk-assume-role-credential-plugins
+      - pip install -r deploy/requirements.txt --upgrade
+
+  pre_build:
+    commands:
+      - npm -v
+      - python --version
+      - cdk --version
+      - aws sts get-caller-identity
+
+  build:
+    commands:
+      - echo "Deploying $STACK_NAMES"
+      - cdk deploy $STACK_NAMES --require-approval never
