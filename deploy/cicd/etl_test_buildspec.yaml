@@ -1,0 +1,14 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo Test stage - install phase
+
+  pre_build:
+    commands:
+      - echo Test stage - pre_build phase
+
+  build:
+    commands:
+      - echo Test stage - build phase

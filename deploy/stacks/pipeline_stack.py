@@ -214,7 +214,7 @@ class PipelineStack(cdk.Stack):
         source_action = _codepipeline_actions.CodeStarConnectionsSourceAction(
             action_name="Source",
             role=self.pipeline_role,
-            owner='aws',
+            owner='sidkalra',
             repo='emr-demo',
             output=self.source_artifact,
             connection_arn="arn:aws:codestar-connections:us-east-1:429068853603:connection/48edf3ac-9ab5-4562-9ec5-1852e8cd45cf",

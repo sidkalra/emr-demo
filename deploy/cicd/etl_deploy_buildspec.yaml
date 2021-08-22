@@ -3,7 +3,7 @@ version: 0.2
 phases:
   install:
     commands:
-      - pip install -r etl/deploy/requirements.txt --upgrade
+      - pip install -r etl/requirements.txt --upgrade
 
   pre_build:
     commands:
@@ -14,5 +14,9 @@ phases:
   build:
     commands:
       - set -xe
-      - cd etl
-      -
+      - cd etl/app
+      - python setup.py bdist_egg
+      - cp dist/*.egg s3://sid-emr-deployment-artifacts/
+      - cp etl/app/__main__.py s3://sid-emr-deployment-artifacts/
+      - cd ../..
+      - aws s3 sync ./dags s3://sk-emr-test-bucket/dags
