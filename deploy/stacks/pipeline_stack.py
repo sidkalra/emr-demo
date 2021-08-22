@@ -137,7 +137,7 @@ class PipelineStack(cdk.Stack):
             run_order: int = None
     ) -> _codepipeline_actions.CodeBuildAction:
         build_spec_object = {
-            'versions': '0.2',
+            'version': '0.2',
             'phases': {
                 'install': {
                     'commands': [f"pip install {python_dependencies}"] if python_dependencies else []
