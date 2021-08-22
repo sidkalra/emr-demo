@@ -12,8 +12,8 @@ class ApplicationStack(cdk.Stack):
         self.application_role = self._create_application_role()
         self.application_instance_profile = self._create_application_instance_profile()
         self.data_encryption_key = self._create_data_encryption_key()
-        self.data_bucket = self._create_encrypted_data_bucket()
-        self._grant_read_write(self.application_role)
+        # self.data_bucket = self._create_encrypted_data_bucket()
+        # self._grant_read_write(self.application_role)
 
     def _create_data_encryption_key(self):
         return _kms.Key(

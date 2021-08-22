@@ -3,3 +3,7 @@ cdk.out
 .idea
 
 **/__pychache__/
+
+etl/app/build/
+etl/app/dist/
+etl/app/emrpkg.egg-info/
