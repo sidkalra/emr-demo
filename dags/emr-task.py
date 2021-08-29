@@ -87,7 +87,7 @@ JOB_FLOW_OVERRIDES = {
         }
     ],
     'VisibleToAllUsers': True,
-    'JobFlowRole': 'sid-emr-job-flow-role',
+    'JobFlowRole': 'sid-emr-instance-profile',
     'ServiceRole': 'sid-emr-service-role',
     'EbsRootVolumeSize': 32,
     'StepConcurrencyLevel': 1
