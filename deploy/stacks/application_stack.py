@@ -64,7 +64,7 @@ class ApplicationStack(cdk.Stack):
         )
         return logs_bucket
 
-    def _create_job_flow_role(self) -> _iam.CfnInstanceProfile:
+    def _create_job_flow_role(self) -> _iam.Role:
         job_flow_role = _iam.Role(
             self, "JobFlowRole",
             role_name="sid-emr-job-flow-role",
@@ -72,7 +72,7 @@ class ApplicationStack(cdk.Stack):
             managed_policies=[_iam.ManagedPolicy.from_aws_managed_policy_name("service-role/AmazonElasticMapReduceforEC2Role")]
         )
         profile = _iam.CfnInstanceProfile(self, "Ec2InstanceProfile", roles=["sid-emr-job-flow-role"], instance_profile_name="sid-emr-instance-profile")
-        return profile
+        return job_flow_role
 
     def _grant_read_write(self, principal: _iam.IPrincipal):
         self.data_bucket.add_to_resource_policy(
