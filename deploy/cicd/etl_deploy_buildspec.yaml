@@ -16,7 +16,7 @@ phases:
       - set -xe
       - cd etl/app
       - python setup.py bdist_egg
-      - cp dist/*.egg s3://sid-emr-spark-application/
-      - cp etl/app/__main__.py s3://sid-emr-spark-application/
+      - aws s3 cp dist/*.egg s3://sid-emr-spark-application/
+      - aws s3 cp etl/app/__main__.py s3://sid-emr-spark-application/
       - cd ../..
       - aws s3 sync ./dags s3://sid-emr-test-dags
