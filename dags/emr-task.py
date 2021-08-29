@@ -34,8 +34,8 @@ SPARK_STEPS = [
                 '--conf',
                 'spark.yarn.submit.waitAppCompletion=true',
                 '--py-files',
-                's3://sid-emr-spark-application/script/emrpkg-0.0.1-py3.9.egg',
-                's3://sid-emr-spark-application/script/__main__.py'
+                's3://sid-emr-spark-application/emrpkg-0.0.1-py3.9.egg',
+                's3://sid-emr-spark-application/__main__.py'
             ],
         },
     }
