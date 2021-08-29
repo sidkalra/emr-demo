@@ -3,7 +3,7 @@ from pyspark.sql import Functions as F
 
 
 def run_app(spark):
-    df = spark.read.csv('s3://sk-emr-test-data/gold_prices.csv', header=True)
+    df = spark.read.csv('s3://sid-emr-test-data-bucket/gold_prices.csv', header=True)
 
     df = df \
         .withColumn(
@@ -31,5 +31,5 @@ def run_app(spark):
         ) \
         .sort('Year') \
         .write \
-        .csv(f's3://sk-emr-test-data/ouptut/{now}')
+        .csv(f's3://sid-emr-test-data-bucket/ouptut/{now}')
 

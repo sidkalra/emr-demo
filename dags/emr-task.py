@@ -34,8 +34,8 @@ SPARK_STEPS = [
                 '--conf',
                 'spark.yarn.submit.waitAppCompletion=true',
                 '--py-files',
-                's3://sid-emr-deployment-artifacts/script/emrpkg-0.0.1-py3.9.egg',
-                's3://sid-emr-deployment-artifacts/script/__main__.py'
+                's3://sid-emr-spark-application/script/emrpkg-0.0.1-py3.9.egg',
+                's3://sid-emr-spark-application/script/__main__.py'
             ],
         },
     }
@@ -44,7 +44,12 @@ SPARK_STEPS = [
 JOB_FLOW_OVERRIDES = {
     'Name': 'demo-cluster-airflow',
     'ReleaseLabel': 'emr-5.33.0',
-    'LogUri': 's3n://emr-test-logs',
+    'LogUri': 's3n://sid-emr-logs',
+    'Applications': [
+        {
+            'Name': 'Spark'
+        }
+    ],
     'Instances': {
         'InstanceFleets': [
             {
@@ -53,27 +58,26 @@ JOB_FLOW_OVERRIDES = {
                 'TargetSpotCapacity': 1,
                 'InstanceTypeConfigs': [
                     {
-                        'InstanceType': 'm1.medium'
+                        'InstanceType': 'm4.large'
                     }
                 ]
             },
             {
                 'Name': 'CORE',
                 'InstanceFleetType': 'CORE',
-                'TargetSpotCapacity': 2,
+                'TargetSpotCapacity': 1,
                 'InstanceTypeConfigs': [
                     {
-                        'InstanceType': 'm1.medium'
+                        'InstanceType': 'm4.large'
                     }
                 ]
             }
 
         ],
         'KeepJobFlowAliveWhenNoSteps': False,
-        'TerminationProtected': False,
-        'Ec2KeyName': 'personal-sid'
+        'TerminationProtected': False
     },
-    'BootStrapActions': [],
+    'BootstrapActions': [],
     'Configurations': [
         {
             'Classification': 'spark-hive-site',
@@ -83,11 +87,10 @@ JOB_FLOW_OVERRIDES = {
         }
     ],
     'VisibleToAllUsers': True,
-    'JobFlowRole': 'EMR_EC2_DefaultRole',
-    'ServiceRole': 'EMR_DefaultRole',
+    'JobFlowRole': 'sid-emr-job-flow-role',
+    'ServiceRole': 'sid-emr-service-role',
     'EbsRootVolumeSize': 32,
-    'StepConcurrencyLevel': 1,
-    'SecurityConfiguration': 'emr-test-sec-config'
+    'StepConcurrencyLevel': 1
 }
 
 with DAG(

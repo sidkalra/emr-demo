@@ -43,7 +43,7 @@ class PipelineStack(cdk.Stack):
     def _create_pipeline(self):
         return _codepipeline.Pipeline(
             self, "Pipeline",
-            pipeline_name="emr-demo-pipeline",
+            pipeline_name="sid-emr-demo-pipeline",
             artifact_bucket=self._create_artifacts_bucket(),
             role=self.pipeline_role
         )
@@ -209,10 +209,6 @@ class PipelineStack(cdk.Stack):
         return ['aws sts get-caller-identity']
 
     def _add_github_source_stage(self) -> IStage:
-        # secrets_key = _kms.Key.from_key_arn(self, "SourceSecretsKey", "arn:aws:kms:eu-west-1:429068853603:key/af1b077a-428f-4780-810c-abda7fb7709b")
-        # secrets_key.grant_decrypt(self.pipeline_role)
-        # github_ssh_key = _sm.Secret.from_secret_arn(self, "GitHubSSHKey", 'arn:aws:secretsmanager:eu-west-1:429068853603:secret:emr-demo-source-code-ssh-key-ucbtl1')
-        # github_ssh_key.grant_read(self.pipeline_role)
         source_action = _codepipeline_actions.CodeStarConnectionsSourceAction(
             action_name="Source",
             role=self.pipeline_role,
@@ -226,13 +222,3 @@ class PipelineStack(cdk.Stack):
             stage_name="Source",
             actions=[source_action]
         )
-
-    def _create_artifacts_bucket(self) -> _s3.Bucket:
-        bucket = _s3.Bucket(
-            self, "DeployementsArtifactsBucket",
-            bucket_name="emr-demo-s3-deployment-artifacts",
-            block_public_access=_s3.BlockPublicAccess.BLOCK_ALL,
-            removal_policy=cdk.RemovalPolicy.DESTROY
-        )
-        return bucket
-
