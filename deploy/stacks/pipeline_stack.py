@@ -176,7 +176,7 @@ class PipelineStack(cdk.Stack):
                     action_name="CdkDeploy",
                     buildspec_filename='deploy/cicd/cdk_deploy_buildspec.yaml',
                     env_vars_str={
-                        'STACK_NAMES': 'sid-emr-test-cfn'
+                        'STACK_NAMES': 'emr-demo-cfn'
                     },
                     run_order=2
                 ),
