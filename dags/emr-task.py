@@ -65,7 +65,7 @@ JOB_FLOW_OVERRIDES = {
             {
                 'Name': 'CORE',
                 'InstanceFleetType': 'CORE',
-                'TargetSpotCapacity': 1,
+                'TargetSpotCapacity': 2,
                 'InstanceTypeConfigs': [
                     {
                         'InstanceType': 'm4.large'

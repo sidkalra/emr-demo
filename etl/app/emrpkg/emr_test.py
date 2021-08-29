@@ -1,5 +1,5 @@
 from datetime import datetime as dt
-from pyspark.sql import Functions as F
+from pyspark.sql import functions as F
 
 
 def run_app(spark):
