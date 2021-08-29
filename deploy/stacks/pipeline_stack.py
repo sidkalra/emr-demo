@@ -188,7 +188,7 @@ class PipelineStack(cdk.Stack):
                 self._generate_codebuild_python_action(
                     action_name="UnpauseDAGs",
                     python_path='deploy',
-                    commands=['python deploy/cicd/unpase_dags.py'],
+                    commands=['python deploy/cicd/unpause_dags.py'],
                     run_order=4
                 )
             ]
