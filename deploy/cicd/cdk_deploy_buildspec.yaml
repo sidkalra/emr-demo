@@ -4,6 +4,7 @@ phases:
   install:
     commands:
       - npm install -g aws-cdk
+      - npm install -g cdk-assume-role-credential-plugin
       - pip install -r deploy/requirements.txt --upgrade
 
   pre_build:
